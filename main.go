@@ -1,8 +1,8 @@
 package main
 
 import (
-	"fmt"
 	"log"
+	"os"
 
 	"github.com/stkisengese/gator-cli/internal/config"
 )
@@ -13,26 +13,21 @@ func main() {
 		log.Fatalf("Error reading config: %v", err)
 	}
 
-	fmt.Println("Initial config:")
-	printConfig(cfg)
+	appState := &state{cfg}
+	cmds := newCommands()
+	cmds.register("login", handlerLogin)
 
-	yourName := "Neema"
-	if err := cfg.SetUser(yourName); err != nil {
-		log.Fatalf("Error setting user: %v", err)
+	if len(os.Args) < 2 {
+		log.Fatal("Usage: cli <command> [args...]")
 	}
-	fmt.Printf("\nSuccessfully updated user to: %s\n", yourName)
 
-	// 3. Read config again and print
-	updatedCfg, err := config.Read()
-	if err != nil {
-		log.Fatalf("Error reading updated config: %v", err)
+	cmd := command{
+		name: os.Args[1],
+		args: os.Args[2:],
 	}
-	fmt.Println("\nUpdated config:")
-	printConfig(updatedCfg)
-}
 
-// Helper function to print config nicely
-func printConfig(cfg *config.Config) {
-	fmt.Printf("DB URL: %s\n", cfg.DBURL)
-	fmt.Printf("Current User: %s\n", cfg.CurrentUserName)
+	if err := cmds.run(appState, cmd); err != nil {
+		log.Fatalf("Error running command: %v", err)
+	}
+
 }
