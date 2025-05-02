@@ -12,3 +12,7 @@ SELECT EXISTS(SELECT 1 FROM users WHERE name = $1);
 
 -- name: DeleteAllUsers :exec
 DELETE FROM users;
+
+-- name: GetAllUsers :many
+SELECT * FROM users
+ORDER BY created_at DESC;
