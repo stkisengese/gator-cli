@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/google/uuid"
@@ -115,5 +116,22 @@ func handlerRegister(s *state, cmd command) error {
 	}
 
 	fmt.Printf("User %s created successfully!\n", user.Name)
+	return nil
+}
+
+func handlerReset(s *state, cmd command) error {
+	ctx := context.Background()
+
+	// Execute the reset query
+	err := s.db.DeleteAllUsers(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to reset database: %w", err)
+	}
+	// Also clear the current user in config
+	if err := s.cfg.SetUser(""); err != nil {
+		return fmt.Errorf("failed to clear config user: %w", err)
+	}
+
+	log.Println("Database reset successfully")
 	return nil
 }
