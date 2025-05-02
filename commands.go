@@ -1,14 +1,19 @@
 package main
 
 import (
+	"context"
 	"errors"
 	"fmt"
+	"time"
 
+	"github.com/google/uuid"
 	"github.com/stkisengese/gator-cli/internal/config"
+	"github.com/stkisengese/gator-cli/internal/database"
 )
 
 // State of the application
 type state struct {
+	db  *database.Queries
 	cfg *config.Config
 }
 
@@ -51,11 +56,64 @@ func handlerLogin(s *state, cmd command) error {
 	}
 
 	username := cmd.args[0]
+	ctx := context.Background()
+
+	// Check if the user exists
+	exists, err := s.db.UserExists(ctx, username)
+	if err != nil {
+		return fmt.Errorf("error checking if user exists: %v", err)
+	}
+
+	if !exists {
+		return fmt.Errorf("user %s does not exist", username)
+	}
+
+	// Set the user in the config
 	if err := s.cfg.SetUser(username); err != nil {
 		return fmt.Errorf("error setting user: %v", err)
 	}
 
 	fmt.Printf("Logging in as: %s\n", username)
 	fmt.Println("User switched successfully!")
+	return nil
+}
+
+// handleRegister handles the register command
+func handlerRegister(s *state, cmd command) error {
+	if len(cmd.args) < 1 {
+		return errors.New("username is required")
+	}
+
+	username := cmd.args[0]
+	ctx := context.Background()
+
+	// Check if the user exists
+	exists, err := s.db.UserExists(ctx, username)
+	if err != nil {
+		return fmt.Errorf("error checking if user exists: %v", err)
+	}
+
+	if exists {
+		return fmt.Errorf("user %s already exists", username)
+	}
+
+	// Create the user
+	user, err := s.db.CreateUser(ctx, database.CreateUserParams{
+		ID:        uuid.New(),
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+		Name:      username,
+	})
+
+	if err != nil {
+		return fmt.Errorf("error creating user: %v", err)
+	}
+
+	// Set the user in the config
+	if err := s.cfg.SetUser(username); err != nil {
+		return fmt.Errorf("error setting user: %v", err)
+	}
+
+	fmt.Printf("User %s created successfully!\n", user.Name)
 	return nil
 }
