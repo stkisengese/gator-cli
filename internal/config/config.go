@@ -32,6 +32,10 @@ func Read() (*Config, error) {
 	return &cfg, nil
 }
 
+func (c *Config) GetCurrentUser() string {
+	return c.CurrentUserName
+}
+
 func (c *Config) SetUser(userName string) error {
 	c.CurrentUserName = userName
 	return write(c)
