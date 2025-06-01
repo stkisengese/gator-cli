@@ -137,23 +137,36 @@ func handlerReset(s *state, cmd command) error {
 }
 
 func handlerUsers(s *state, cmd command) error {
-    ctx := context.Background()
-    
-    users, err := s.db.GetAllUsers(ctx)
-    if err != nil {
-        return fmt.Errorf("failed to fetch users: %w", err)
-    }
+	ctx := context.Background()
 
-    for _, user := range users {
-        prefix := "* "
-        if user.Name == s.cfg.GetCurrentUser() {
-            prefix += user.Name + " (current)"
-        } else {
-            prefix += user.Name
-        }
-        fmt.Println(prefix)
-    }
-    
-    return nil
+	users, err := s.db.GetAllUsers(ctx)
+	if err != nil {
+		return fmt.Errorf("failed to fetch users: %w", err)
+	}
+
+	for _, user := range users {
+		prefix := "* "
+		if user.Name == s.cfg.GetCurrentUser() {
+			prefix += user.Name + " (current)"
+		} else {
+			prefix += user.Name
+		}
+		fmt.Println(prefix)
+	}
+
+	return nil
 }
 
+func handlerAgg(s *state, cmd command) error {
+	ctx := context.Background()
+	feedURL := "https://www.wagslane.dev/index.xml"
+
+	log.Printf("Fetching feed from: %s", feedURL)
+	feed, err := fetchFeed(ctx, feedURL)
+	if err != nil {
+		return fmt.Errorf("failed to fetch feed: %w", err)
+	}
+
+	fmt.Println(feed.String())
+	return nil
+}
