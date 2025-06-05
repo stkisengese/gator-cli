@@ -1,0 +1,122 @@
+# Gator 🐊 - RSS Feed Aggregator
+
+A powerful command-line RSS feed aggregator built in Go that helps you stay up-to-date with your favorite blogs, news sites, podcasts, and more!
+
+## 🚀 Features
+
+- **Feed Management**: Add and manage RSS feeds from across the internet
+- **Database Storage**: Store collected posts in a PostgreSQL database for persistence
+- **Social Following**: Follow and unfollow RSS feeds added by other users
+- **Terminal Summaries**: View clean summaries of aggregated posts with links to full articles
+- **Continuous Fetching**: Long-running service that automatically fetches new posts
+- **Type-Safe SQL**: Built with `sqlc` for type-safe database operations
+- **Database Migrations**: Managed with `goose` for seamless schema updates
+
+## 📋 Prerequisites
+
+Before getting started, make sure you have:
+
+- **Go 1.19+** installed on your system
+- **PostgreSQL** database server running
+- Basic familiarity with:
+  - Go programming language
+  - SQL databases
+  - Command-line interfaces
+
+## 🛠️ Installation
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/stkisengese/gator-cli.git
+   cd gator-cli
+   ```
+
+2. **Install dependencies**
+   ```bash
+   go mod download
+   ```
+
+3. **Set up PostgreSQL database**
+   ```bash
+   createdb gator_db
+   ```
+
+4. **Configure environment variables**
+   ```bash
+   export DATABASE_URL="postgres://username:password@localhost/gator_db?sslmode=disable"
+   ```
+
+5. **Run database migrations**
+   ```bash
+   goose up
+   ```
+
+6. **Build the application**
+   ```bash
+   go build -o gator
+   ```
+
+## 🎯 Usage
+
+## 🚦 Development
+
+### Running Tests
+
+```bash
+go test ./...
+```
+
+### Database Migrations
+
+Create a new migration:
+```bash
+goose create migration_name sql
+```
+
+Apply migrations:
+```bash
+goose up
+```
+
+Rollback migrations:
+```bash
+goose down
+```
+
+### Generating SQL Code
+
+After modifying SQL queries, regenerate type-safe code:
+```bash
+sqlc generate
+```
+
+## 📚 Learning Outcomes
+
+This project demonstrates:
+
+- **Database Integration**: Seamless Go-PostgreSQL integration patterns
+- **Type-Safe SQL**: Using `sqlc` for compile-time SQL validation
+- **Database Migrations**: Managing schema changes with `goose`
+- **Concurrent Programming**: Handling multiple RSS feeds simultaneously
+- **CLI Development**: Building user-friendly command-line tools
+- **RSS Processing**: Parsing and handling various RSS feed formats
+- **Long-Running Services**: Creating background processes for continuous operation
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- Built with [sqlc](https://sqlc.dev/) for type-safe SQL
+- Database migrations powered by [goose](https://github.com/pressly/goose)
+- RSS parsing capabilities for diverse feed formats
+- PostgreSQL for robust data persistence
